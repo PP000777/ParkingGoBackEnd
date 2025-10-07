@@ -188,23 +188,10 @@ Prioridades:
 
 ---
 
-## 👥 Equipe & Contato
-
-* **Ruan** — Backend / DB — [ruan.premium@parkinggo.com](mailto:ruan.premium@parkinggo.com)
-* **Pedro** — Mobile / Frontend — [pedro.normal@parkinggo.com](mailto:pedro.normal@parkinggo.com)
-
----
-
-## 📄 Licença
-
-Licença: **ISC** — veja `LICENSE`.
-
----
-
 ## 🛣️ Roadmap Curto Prazo
 
 * [x] Estrutura inicial (models/controllers/services)
-* [x] Script SQL e dados de exemplo
+* [ ] Script SQL e dados de exemplo
 * [ ] JWT Authentication + roles (Ultra Plus)
 * [ ] Proteção das rotas hardware/sensor
 * [ ] WebSocket/MQTT para atualização em tempo real
