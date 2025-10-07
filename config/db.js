@@ -1,35 +1,32 @@
+// config/db.js
 import { Sequelize } from 'sequelize';
+import dotenv from 'dotenv';
 
-// Cria a instância do Sequelize a partir das variáveis .env
+dotenv.config();
+
+// Cria a instância do Sequelize
 const sequelize = new Sequelize(
-    process.env.DB_NAME, 
-    process.env.DB_USER, 
-    process.env.DB_PASSWORD, 
-    {
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT,
-        dialect: 'postgres',
-        // Loga queries SQL apenas em desenvolvimento
-        logging: process.env.NODE_ENV === 'development' ? console.log : false 
-    }
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASS,
+  {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    dialect: process.env.DB_DIALECT,
+    logging: false,
+  }
 );
 
-/**
- * Tenta autenticar a conexão e sincroniza os modelos com o PostgreSQL.
- */
-const connectDB = async () => {
-    try {
-        await sequelize.authenticate();
-        console.log(`[DB] Conexão com PostgreSQL estabelecida com sucesso.`);
-        
-        // Sincroniza os modelos (cria as tabelas se não existirem). 
-        await sequelize.sync({ force: false }); 
-        console.log(`[DB] Modelos sincronizados com o banco de dados.`);
-    } catch (error) {
-        console.error(`[DB ERROR] Falha na conexão/sincronização do PostgreSQL: ${error.message}`);
-        // Termina o processo se falhar a conexão
-        process.exit(1); 
-    }
+// Função para testar a conexão
+export const connectDB = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('Conexão com o PostgreSQL realizada com sucesso!');
+  } catch (error) {
+    console.error('Erro ao conectar com o banco:', error);
+    process.exit(1); // encerra o processo em caso de falha
+  }
 };
 
-export { sequelize, connectDB };
+// Exporta também o sequelize (para usar nos models)
+export default sequelize;
