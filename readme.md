@@ -1,33 +1,6 @@
 ```markdown
 # 🚗 ParkingGo! — Backend API
-
-[![Status](https://img.shields.io/badge/status-active-brightgreen.svg)](https://github.com/seuusuario/parkinggo-backend)
-[![Node.js](https://img.shields.io/badge/node-%3E%3D16-brightgreen)]()
-[![Postgres](https://img.shields.io/badge/postgres-%3E%3D12-blue)]()
-[![License](https://img.shields.io/badge/license-ISC-blue.svg)]()
-
 > Backend RESTful em **Node.js + Express + PostgreSQL (Sequelize)** para o sistema de estacionamento inteligente **ParkingGo!** — gestão de vagas, reservas e integração com sensores. Projeto preparado para adicionar autenticação JWT e políticas de planos (ex.: Ultra Plus).
-
----
-
-## 📋 Sumário
-
-- [Visão Geral](#-visão-geral)  
-- [Destaques](#-destaques)  
-- [Estrutura do Repositório](#-estrutura-do-repositório)  
-- [Pré-requisitos](#-pré-requisitos)  
-- [Instalação Rápida](#-instalação-rápida)  
-- [Configuração (.env)](#-configuração-env)  
-- [Banco de Dados](#-banco-de-dados)  
-- [Como Rodar (local / Docker)](#-como-rodar-local--docker)  
-- [Endpoints Principais](#-endpoints-principais)  
-- [Exemplos de Requisição (curl)](#-exemplos-de-requisição-curl)  
-- [Regras de Negócio Importantes](#-regras-de-negócio-importantes)  
-- [Segurança & Próximos Passos](#-segurança--próximos-passos)  
-- [Contribuição](#-contribuição)  
-- [Contato & Equipe](#-contato--equipe)  
-- [Licença](#-licença)  
-- [Roadmap Curto Prazo](#-roadmap-curto-prazo)
 
 ---
 
