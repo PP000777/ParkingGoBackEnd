@@ -1,203 +1,203 @@
 ```markdown
 # 🚗 ParkingGo! — Backend API
-
-> **API RESTful** desenvolvida em **Node.js + Express + PostgreSQL (via Sequelize)** para o sistema de estacionamento inteligente **ParkingGo!**.  
-> O backend gerencia **vagas, reservas e sensores**, com suporte a **autenticação futura via JWT** e integração com o **app mobile ParkingGo!**.
+> Backend RESTful em **Node.js + Express + PostgreSQL (Sequelize)** para o sistema de estacionamento inteligente **ParkingGo!** — gestão de vagas, reservas e integração com sensores. Projeto preparado para adicionar autenticação JWT e políticas de planos (ex.: Ultra Plus).
 
 ---
 
 ## 🧠 Visão Geral
 
-O **ParkingGo!** é um sistema que moderniza estacionamentos, oferecendo **monitoramento em tempo real**, **reserva antecipada** e **gestão inteligente de vagas**.  
-Este repositório contém o **backend** do projeto — responsável por:
+O ParkingGo! fornece uma API para:
 
-- 📊 Gerenciar o banco de dados PostgreSQL (vagas e usuários);
-- ⚙️ Expor endpoints REST para comunicação com o app e sensores;
-- ⏱️ Aplicar regras de negócio como **tempo de reserva e status das vagas**;
-- 🔒 (Em breve) Implementar autenticação JWT para planos Premium e Ultra Plus.
-
----
-
-## 📁 Estrutura do Projeto
-
-```
-
-parkinggo-backend/
-│
-├── config/
-│   └── db.js                # Conexão com o banco de dados (Sequelize)
-│
-├── controllers/
-│   └── vagas.controller.js  # Controladores das rotas de vagas
-│
-├── models/
-│   └── VagaModel.js         # Modelo Sequelize da tabela 'vagas'
-│
-├── routes/
-│   └── vagas.routes.js      # Rotas da API
-│
-├── services/
-│   └── vaga.service.js      # Lógica de negócio (reserva, sensores)
-│
-├── create_db.sql            # Script SQL de criação do banco
-├── .env.example             # Modelo do arquivo de ambiente
-├── server.js                # Ponto de entrada principal da API
-├── package.json             # Configuração do projeto
-└── README.md                # Este arquivo 😎
-
-````
+- Monitoramento em tempo real do status das vagas;
+- Reserva temporária (ex.: plano Ultra Plus — 15 minutos de tolerância);
+- Receber atualizações de sensores/hardware (status: `Disponível`, `Ocupada`, `Manutenção`);
+- Base pronta para autenticação JWT e autorização por plano.
 
 ---
 
-## ⚙️ Tecnologias Utilizadas
+## ✨ Destaques
 
-| Categoria | Tecnologias |
-|------------|-------------|
-| **Backend** | Node.js, Express.js |
-| **Banco de Dados** | PostgreSQL |
-| **ORM** | Sequelize |
-| **Ambiente** | dotenv |
-| **Dev Tools** | Nodemon |
+- Código organizado em camadas: `controllers`, `services`, `models`, `routes`.
+- Regras de negócio isoladas em `services/` (fácil testabilidade).
+- Script SQL (`create_db.sql`) para criar enums/tabelas + dados de teste.
+- Configuração via `.env` (dotenv).
+- Nodemon para dev.
+---
+
+## 🛠️ Pré-requisitos
+
+- Node.js >= 16  
+- npm >= 8  
+- PostgreSQL >= 12  
+- (Opcional) Docker & Docker Compose
 
 ---
 
-## 🚀 Como Rodar o Projeto
+## 🚀 Instalação Rápida
 
-### 1️⃣ Clonar o repositório
 ```bash
 git clone https://github.com/seuusuario/parkinggo-backend.git
 cd parkinggo-backend
+npm install
+cp .env.example .env
+# ajuste .env conforme seu ambiente
+psql -U <seu_usuario> -f create_db.sql
+npm run dev   # nodemon
+# ou npm start
 ````
 
-### 2️⃣ Instalar dependências
+---
 
-```bash
-npm install
-```
+## 🔧 Configuração (`.env`)
 
-### 3️⃣ Configurar variáveis de ambiente
+Exemplo (`.env.example`):
 
-Crie um arquivo `.env` na raiz do projeto, baseado no exemplo abaixo:
-
-```bash
-cp .env.example .env
-```
-
-Edite o arquivo `.env` com suas credenciais do PostgreSQL:
-
-```ini
-# --- Configurações do Servidor ---
+```env
 PORT=3000
 NODE_ENV=development
 
-# --- Banco de Dados ---
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=parkinggodb
 DB_USER=postgres
-DB_PASSWORD=sua_senha_aqui
+DB_PASSWORD=sua_senha_secreta
 
-# --- Futuro: Autenticação JWT ---
 JWT_SECRET=UM_SEGREDO_MUITO_FORTE_E_ALEATORIO_PARA_JWT
 ```
 
-### 4️⃣ Criar o banco de dados
+> **Nunca** comite `.env` com credenciais reais.
 
-Abra o terminal `psql` (ou use pgAdmin) e execute o script SQL:
+---
 
-```bash
-psql -U postgres -f create_db.sql
+## 🗄️ Banco de Dados
+
+* Execute `create_db.sql` para criar tipos ENUM (`vaga_status`, `vaga_tipo`), tabelas `vagas` e `usuarios` e inserir dados de exemplo.
+* Em produção, **use migrations** (ex.: `sequelize-cli` ou um sistema de migração), não `sequelize.sync({ force: true })`.
+
+---
+
+## 🐳 Rodando com Docker (exemplo rápido)
+
+`docker-compose.yml` mínimo sugerido:
+
+```yaml
+version: "3.8"
+services:
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: parkinggodb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: sua_senha_secreta
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api:
+    build: .
+    command: npm run dev
+    environment:
+      - DB_HOST=db
+      - DB_USER=postgres
+      - DB_PASSWORD=sua_senha_secreta
+      - DB_NAME=parkinggodb
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
 ```
-
-### 5️⃣ Rodar o servidor
-
-Para iniciar em modo desenvolvimento (com auto-reload):
-
-```bash
-npm run dev
-```
-
-Ou modo produção:
-
-```bash
-npm start
-```
-
-Servidor disponível em:
-👉 **[http://localhost:3000](http://localhost:3000)**
 
 ---
 
 ## 📡 Endpoints Principais
 
-| Método | Rota                    | Descrição                                       |
-| ------ | ----------------------- | ----------------------------------------------- |
-| `GET`  | `/`                     | Health Check da API                             |
-| `GET`  | `/api/vagas`            | Lista todas as vagas                            |
-| `GET`  | `/api/vagas/resumo`     | Retorna o resumo de disponibilidade por setor   |
-| `POST` | `/api/vagas/reservar`   | Realiza reserva de vaga (Plano Ultra Plus)      |
-| `PUT`  | `/api/vagas/:id/status` | Atualiza status da vaga (integração com sensor) |
+Base: `http://localhost:3000`
+
+* `GET  /` — health check
+* `GET  /api/vagas` — lista todas as vagas
+* `GET  /api/vagas/resumo` — resumo por setor (total / disponíveis)
+* `POST /api/vagas/reservar` — reservar vaga (body: `{ vagaId, usuarioId }`)
+* `PUT  /api/vagas/:id/status` — atualizar status (body: `{ status }`)
 
 ---
 
-## 🧩 Regras de Negócio Implementadas
+## 🔁 Exemplos (curl)
 
-* ✅ Vagas só podem ser reservadas se estiverem **disponíveis**;
-* ⏳ Reserva expira automaticamente após **15 minutos** se o motorista não ocupar;
-* 🚦 Sensores atualizam o status da vaga via API (`/status`);
-* 🔁 Caso uma vaga volte a ficar “Disponível”, a reserva é automaticamente **limpa**;
-* 🧠 Estrutura pronta para autenticação de usuários via JWT.
+Listar vagas:
 
----
+```bash
+curl http://localhost:3000/api/vagas
+```
 
-## 🗃️ Banco de Dados
+Reservar vaga:
 
-O projeto utiliza **PostgreSQL** com dois tipos de entidades principais:
+```bash
+curl -X POST http://localhost:3000/api/vagas/reservar \
+  -H "Content-Type: application/json" \
+  -d '{"vagaId":1,"usuarioId":"uid_premium_1"}'
+```
 
-* **vagas** → Gerencia número, setor, status, tipo, localização e reservas.
-* **usuarios** → Contém nome, e-mail e plano do motorista (Gratuito, Premium, Ultra Plus).
+Atualizar status (sensor):
 
-> O script `create_db.sql` cria as tabelas, tipos ENUM e insere dados iniciais de teste.
-
----
-
-## 🧰 Scripts Disponíveis
-
-| Comando       | Descrição                        |
-| ------------- | -------------------------------- |
-| `npm start`   | Inicia o servidor normalmente    |
-| `npm run dev` | Inicia com nodemon (auto reload) |
-| `npm install` | Instala todas as dependências    |
+```bash
+curl -X PUT http://localhost:3000/api/vagas/2/status \
+  -H "Content-Type: application/json" \
+  -d '{"status":"Disponível"}'
+```
 
 ---
 
-## 🧑‍💻 Equipe ParkingGo!
+## 🧩 Regras de Negócio (essenciais)
 
-| Nome              | Função                                 | Contato                                                         |
-| ----------------- | -------------------------------------- | --------------------------------------------------------------- |
-| Ruan              | Backend / Banco de Dados               | [ruan.premium@parkinggo.com](mailto:ruan.premium@parkinggo.com) |
-| Pedro             | App Mobile / Frontend                  | [pedro.normal@parkinggo.com](mailto:pedro.normal@parkinggo.com) |
-| Equipe ParkingGo! | 💙 Projeto Integrador SA Mobilidade 3B |                                                                 |
-
----
-
-## 📄 Licença
-
-Este projeto está sob a licença **ISC**.
-Sinta-se livre para usar, modificar e contribuir!
+* Reserva só se `status === 'Disponível'` e sem reserva ativa.
+* Tempo de tolerância da reserva: **15 minutos** (constante `TEMPO_RESERVA_MINUTOS`).
+* Quando sensor reporta `Disponível`, reserva é limpa (`reservada_por_usuario_id = null`, `expira_em = null`).
+* Códigos HTTP usados: `200`, `400`, `404`, `409`, `500`.
 
 ---
 
-## 🌟 Próximos Passos
+## 🔒 Segurança & Próximos Passos
 
-* [ ] Implementar **JWT Authentication** para usuários e planos
-* [ ] Criar **rotas seguras** (hardware/sensores autenticados)
-* [ ] Integrar com o **ParkingGo! App Mobile (React Native/Expo)**
-* [ ] Implantar em **Railway / Render / Vercel**
+Prioridades:
+
+1. Implementar **autenticação JWT** (login, refresh tokens).
+2. Autorização por plano: somente `Ultra Plus` pode reservar.
+3. Proteger rota de sensores (`/api/vagas/:id/status`) com token/assinatura específica do hardware.
+4. Input validation (Joi/Zod), rate limiting, CORS, logs estruturados e monitoramento (Sentry/Prometheus).
+
+> Posso implementar um fluxo básico de JWT + middleware de autorização agora, se quiser.
 
 ---
 
-**🚀 API ParkingGo! — Conectando motoristas e vagas de forma inteligente.**
+## 🧪 Testes & CI
+
+* Recomendado criar testes unitários para `services/` (reserva/expiração) e `controllers/`.
+* Ex.: GitHub Actions com Node matrix (16, 18), execução de lint + testes.
+
+---
+
+## 🤝 Contribuição
+
+1. Fork → branch `feature/<nome>` → PR claro com descrição e testes.
+2. Use `eslint` + `prettier` para manter consistência de estilo.
+3. Documente alterações no `CHANGELOG.md`.
+
+---
+
+## 🛣️ Roadmap Curto Prazo
+
+* [x] Estrutura inicial (models/controllers/services)
+* [ ] Script SQL e dados de exemplo
+* [ ] JWT Authentication + roles (Ultra Plus)
+* [ ] Proteção das rotas hardware/sensor
+* [ ] WebSocket/MQTT para atualização em tempo real
+* [ ] Testes automatizados + CI
+
+
 
 ```
 ```
