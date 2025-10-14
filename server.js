@@ -1,8 +1,7 @@
+// server.js
 import express from 'express';
 import dotenv from 'dotenv';
-import connectDB from './config/db.js'; // ❌ errado se usar export nomeado
-import { connectDB as testDB } from './config/db.js'; // ✅ export nomeado
-
+import { connectDB } from './config/db.js'; // ✅ APENAS export nomeado
 import vagasRoutes from './routes/vagas.routes.js';
 
 dotenv.config();
@@ -10,8 +9,8 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// Conectar ao banco
-await testDB(); // testa a conexão com PostgreSQL
+// Testa conexão com banco PostgreSQL
+await connectDB();
 
 // Rotas
 app.use('/vagas', vagasRoutes);

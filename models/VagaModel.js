@@ -1,21 +1,17 @@
-// models/VagaModel.js
-import sequelize from '../config/db.js'; // ✅ sem chaves
 import { DataTypes } from 'sequelize';
+import sequelize from '../config/db.js';
 
 const Vaga = sequelize.define('Vaga', {
-  numero_vaga: {
+  titulo: {
     type: DataTypes.STRING,
-    allowNull: false
-  },
-  tipo_vaga: {
-    type: DataTypes.ENUM('normal', 'PCD', 'elétrica'),
-    allowNull: false
+    allowNull: false,
   },
   status: {
-    type: DataTypes.ENUM('livre', 'ocupada', 'reservada'),
-    allowNull: false,
-    defaultValue: 'livre'
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
   }
+}, {
+  tableName: 'vagas',
 });
 
 export default Vaga;
