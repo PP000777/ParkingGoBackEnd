@@ -1,10 +1,8 @@
 import Vaga from '../models/VagaModel.js';
 
-const TEMPO_RESERVA_MINUTOS = 15; // Regra de negócio: 15 minutos de tolerância
+const TEMPO_RESERVA_MINUTOS = 15; 
 
-/**
- * @desc    Executa a lógica de reserva da vaga, validando status e aplicando tempo limite.
- */
+
 export const executarReserva = async (vagaId, usuarioId) => {
     const vaga = await Vaga.findByPk(vagaId);
 
@@ -12,20 +10,20 @@ export const executarReserva = async (vagaId, usuarioId) => {
         throw new Error('Vaga não encontrada.');
     }
 
-    // Validação de Expiração: Verifica se a reserva atual expirou
+
     const isReservedAndActive = vaga.reservadaPorUsuarioId && vaga.expiraEm > new Date();
 
-    // Regra de Negócio Crítica: Vaga deve estar 'Disponível' e não ter reserva ativa
+
     if (vaga.status !== 'Disponível' || isReservedAndActive) {
         throw new Error('Vaga indisponível (ocupada ou já reservada por outro motorista).');
     }
     
-    // Cálculo do tempo de expiração
+
     const expiraEm = new Date(Date.now() + TEMPO_RESERVA_MINUTOS * 60 * 1000);
 
-    // Aplica a Reserva
+
     await vaga.update({
-        status: 'Ocupada', // Marca como ocupada (reservada)
+        status: 'Ocupada', 
         reservadaPorUsuarioId: usuarioId,
         expiraEm: expiraEm,
     });
@@ -33,9 +31,6 @@ export const executarReserva = async (vagaId, usuarioId) => {
     return vaga;
 };
 
-/**
- * @desc    Atualiza o status da vaga, simulando a leitura do sensor/hardware.
- */
 export const atualizarStatusELimparReserva = async (id, novoStatus) => {
     const vaga = await Vaga.findByPk(id);
 
@@ -45,7 +40,6 @@ export const atualizarStatusELimparReserva = async (id, novoStatus) => {
 
     let updateData = { status: novoStatus };
 
-    // Regra de Negócio: Se o sensor reporta 'Disponível', limpamos a reserva.
     if (novoStatus === 'Disponível') {
          updateData.reservadaPorUsuarioId = null;
          updateData.expiraEm = null;
