@@ -1,32 +1,33 @@
 // config/db.js
+
 import { Sequelize } from 'sequelize';
-import dotenv from 'dotenv';
+import dotenv from 'dotenv'; // 1. Importa o dotenv
+dotenv.config();            // 2. Chama a configuração AQUI!
 
-dotenv.config();
+const DB_NAME = process.env.DB_NAME;
+const DB_USER = process.env.DB_USER;
+const DB_PASS = process.env.DB_PASS;
+const DB_HOST = process.env.DB_HOST;
+const DB_DIALECT = process.env.DB_DIALECT; // <-- Agora, garantidamente 'postgres'
+const DB_PORT = process.env.DB_PORT;
 
-// Cria a instância do Sequelize
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASS,
-  {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    dialect: process.env.DB_DIALECT,
-    logging: false,
-  }
-);
+// Linha 11: Cria a instância do Sequelize
+const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
+  host: DB_HOST,
+  port: DB_PORT,
+  dialect: DB_DIALECT, // Aqui o valor 'postgres' é passado.
+  logging: false
+});
 
-// Função para testar a conexão
 export const connectDB = async () => {
   try {
     await sequelize.authenticate();
-    console.log('Conexão com o PostgreSQL realizada com sucesso!');
+    console.log('✅ Conexão com o PostgreSQL estabelecida com sucesso.');
   } catch (error) {
-    console.error('Erro ao conectar com o banco:', error);
-    process.exit(1); // encerra o processo em caso de falha
+    // Se ainda falhar, agora será um erro de credencial/conexão real, não de Dialect.
+    console.error('❌ Não foi possível conectar ao banco de dados. Verifique o .env e se o PostgreSQL está rodando:', error.message);
+    process.exit(1); 
   }
 };
 
-// Exporta também o sequelize (para usar nos models)
 export default sequelize;

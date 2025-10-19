@@ -1,23 +1,51 @@
+// models/Vaga.js
+
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
 
 const Vaga = sequelize.define('Vaga', {
-  // Ajuste para mapear a chave primária 'id_vaga'
-  id: {
-    type: DataTypes.INTEGER, // Ajuste o tipo se for diferente (ex: UUID)
-    primaryKey: true,
-    autoIncrement: true, 
-    field: 'id_vaga', // Mapeia o atributo 'id' da Model para a coluna 'id_vaga' do DB
-  },
-  // Atenção: Seu serviço espera strings ('Disponível', 'Ocupada'). Mude para STRING se necessário.
-  status: { 
-    type: DataTypes.STRING, // Alterei para STRING, pois o service usa 'Disponível' e 'Ocupada'
-    defaultValue: 'Disponível',
-  }
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    numero: {
+        type: DataTypes.STRING(10),
+        allowNull: false,
+        unique: true
+    },
+    setor: {
+        type: DataTypes.STRING(50),
+        allowNull: false
+    },
+    status: {
+        // Mapeia o ENUM 'vaga_status'
+        type: DataTypes.ENUM('Disponível', 'Ocupada', 'Manutenção'),
+        allowNull: false,
+        defaultValue: 'Disponível'
+    },
+    tipo: {
+        // Mapeia o ENUM 'vaga_tipo'
+        type: DataTypes.ENUM('Normal', 'PCD', 'Idoso', 'ReservaExclusiva'),
+        allowNull: false,
+        defaultValue: 'Normal'
+    },
+    reservada_por_usuario_id: {
+        type: DataTypes.STRING(50)
+    },
+    expira_em: {
+        type: DataTypes.DATE
+    },
+    latitude: {
+        type: DataTypes.DOUBLE
+    },
+    longitude: {
+        type: DataTypes.DOUBLE
+    }
 }, {
-  tableName: 'vagas',
-  // SOLUÇÃO PARA O ERRO 'coluna "createdAt" não existe':
-  timestamps: false, 
+    tableName: 'vagas', 
+    timestamps: true,
 });
+
 
 export default Vaga;
